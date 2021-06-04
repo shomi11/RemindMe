@@ -79,6 +79,13 @@ class DataController: ObservableObject {
 
 extension DataController {
 
+
+    func addEvent(for task: Task, completion: @escaping (Bool) -> Void) {
+        eventStore.requestAccess(to: .event) { granted, error in
+            completion(granted)
+        }
+    }
+
     func setNotification(for task: Task, completion: @escaping (Bool) -> Void) {
         let userNotificationCenter = UNUserNotificationCenter.current()
         userNotificationCenter.getNotificationSettings { settings in
