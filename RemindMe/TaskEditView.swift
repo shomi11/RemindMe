@@ -106,6 +106,9 @@ struct TaskEditView: View {
             task.remindMe = nil
             dataController.removeNotification(for: task)
         }
+        if shouldAddEvent == false {
+            dataController.removeEvent(task: task)
+        }
     }
 
     private func showNotificationSettings() {

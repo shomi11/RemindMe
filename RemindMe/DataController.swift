@@ -79,11 +79,16 @@ class DataController: ObservableObject {
 
 extension DataController {
 
-
     func addEvent(for task: Task, completion: @escaping (Bool) -> Void) {
         eventStore.requestAccess(to: .event) { granted, error in
             completion(granted)
         }
+    }
+
+    func removeEvent(task: Task) {
+        let taskID = task.objectID.uriRepresentation().absoluteString
+        guard let event = eventStore.event(withIdentifier: taskID) else { return }
+        try? eventStore.remove(event, span: .thisEvent, commit: true)
     }
 
     func setNotification(for task: Task, completion: @escaping (Bool) -> Void) {
@@ -113,8 +118,8 @@ extension DataController {
 
     func removeNotification(for task: Task) {
         let userNotificationCenter = UNUserNotificationCenter.current()
-        let projectID = task.objectID.uriRepresentation().absoluteString
-        userNotificationCenter.removePendingNotificationRequests(withIdentifiers: [projectID])
+        let taskID = task.objectID.uriRepresentation().absoluteString
+        userNotificationCenter.removePendingNotificationRequests(withIdentifiers: [taskID])
     }
 
     private func requestNotification(completion: @escaping (Bool) -> Void) {
