@@ -7,15 +7,18 @@
 
 import Foundation
 import CoreData
-
+import EventKit
+import UserNotifications
 
 class DataController: ObservableObject {
 
     let container: NSPersistentCloudKitContainer
+    let eventStore: EKEventStore!
 
     init(inRAMMemoryUsage: Bool = false) {
 
         container = NSPersistentCloudKitContainer(name: "Task", managedObjectModel: Self.model)
+        eventStore = EKEventStore()
 
         if inRAMMemoryUsage {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
@@ -66,10 +69,88 @@ class DataController: ObservableObject {
         for jus in 1...10 {
             let task = Task(context: context)
             task.name = "Task \(jus)"
+            task.remindMe = Date()
             task.detail = "Task detail \(jus)"
             task.isCompleted = Bool.random()
         }
         try context.save()
     }
+}
 
+extension DataController {
+
+    func setNotification(for task: Task, completion: @escaping (Bool) -> Void) {
+        let userNotificationCenter = UNUserNotificationCenter.current()
+        userNotificationCenter.getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                self.requestNotification { granted in
+                    switch granted {
+                    case true:
+                        self.placeNotification(for: task, completion: completion)
+                    case false:
+                        DispatchQueue.main.async {
+                            completion(false)
+                        }
+                    }
+                }
+            case .authorized:
+                self.placeNotification(for: task, completion: completion)
+            default:
+                DispatchQueue.main.async {
+                    completion(false)
+                }
+            }
+        }
+    }
+
+    func removeNotification(for task: Task) {
+        let userNotificationCenter = UNUserNotificationCenter.current()
+        let projectID = task.objectID.uriRepresentation().absoluteString
+        userNotificationCenter.removePendingNotificationRequests(withIdentifiers: [projectID])
+    }
+
+    private func requestNotification(completion: @escaping (Bool) -> Void) {
+        let userNotificationCenter = UNUserNotificationCenter.current()
+        userNotificationCenter.requestAuthorization(options: [.alert, .sound]) { isGranted, _ in
+            completion(isGranted)
+        }
+    }
+
+    private func placeNotification(for task: Task, completion: @escaping (Bool) -> Void) {
+        let notificationContent = UNMutableNotificationContent()
+        notificationContent.title = task.unwrappedName
+        notificationContent.sound = .default
+        if let detail = task.detail {
+            notificationContent.subtitle = detail
+        }
+
+        let dateComponents = Calendar.current.dateComponents(
+            [.hour, .minute],
+            from: task.remindMe ?? Date()
+        )
+
+        let notificationTrigger = UNCalendarNotificationTrigger(
+            dateMatching: dateComponents,
+            repeats: true
+        )
+
+        let notificationID = task.objectID.uriRepresentation().absoluteString
+        let notificationRequest = UNNotificationRequest(
+            identifier: notificationID,
+            content: notificationContent,
+            trigger: notificationTrigger
+        )
+
+        let userNotificationCenter = UNUserNotificationCenter.current()
+        userNotificationCenter.add(notificationRequest) { error in
+            DispatchQueue.main.async {
+                if error != nil {
+                    completion(false)
+                } else {
+                    completion(true)
+                }
+            }
+        }
+    }
 }
