@@ -11,7 +11,7 @@ import Foundation
 extension Task {
 
     var unwrappedName: String {
-        name ?? ""
+        name ?? "New Task"
     }
 
     var unwrappedReminderDate: Date {
@@ -21,5 +21,15 @@ extension Task {
     var unwrappedDetail: String {
         detail ?? ""
     }
+
+    static let example: Task = {
+        let controller = DataController.preview
+        let task = Task(context: controller.container.viewContext)
+        task.detail = "Some detail here"
+        task.isCompleted = false
+        task.name = "Here is name"
+        task.remindMe = Date()
+        return task
+    }()
 
 }
