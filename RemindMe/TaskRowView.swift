@@ -13,7 +13,7 @@ struct TaskRowView: View {
     
     var body: some View {
         NavigationLink(destination: TaskEditView(task: task)) {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 16) {
                     Text(task.unwrappedName)
                         .font(.titleFont)
@@ -23,6 +23,7 @@ struct TaskRowView: View {
                         .font(.subTitleFont)
                 }
             }
+            .padding([.top, .bottom], 8)
         }
     }
 }

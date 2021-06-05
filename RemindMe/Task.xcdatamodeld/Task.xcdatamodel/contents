@@ -2,12 +2,11 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20F5065a" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Task" representedClassName="Task" syncable="YES" codeGenerationType="class">
         <attribute name="detail" optional="YES" attributeType="String"/>
-        <attribute name="eventAdded" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="eventIdentifier" optional="YES" attributeType="String"/>
         <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Task" positionX="-63" positionY="-18" width="128" height="104"/>
+        <element name="Task" positionX="-63" positionY="-18" width="128" height="89"/>
     </elements>
 </model>
