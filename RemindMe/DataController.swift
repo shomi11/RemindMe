@@ -49,9 +49,9 @@ class DataController: ObservableObject {
     }
 
     func deleteAll() {
-        let fetchRequest1: NSFetchRequest<NSFetchRequestResult> = Task.fetchRequest()
-        let batchRequest1 = NSBatchDeleteRequest(fetchRequest: fetchRequest1)
-        _ = try? container.viewContext.execute(batchRequest1)
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Task.fetchRequest()
+        let batchRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        _ = try? container.viewContext.execute(batchRequest)
     }
 
     static var preview: DataController = {
@@ -86,9 +86,12 @@ extension DataController {
     }
 
     func removeEvent(task: Task) {
-        let taskID = task.objectID.uriRepresentation().absoluteString
-        guard let event = eventStore.event(withIdentifier: taskID) else { return }
-        try? eventStore.remove(event, span: .thisEvent, commit: true)
+        guard let event = eventStore.event(withIdentifier: task.eventIdentifier ?? "") else { return }
+        do {
+            try eventStore.remove(event, span: .thisEvent, commit: true)
+        } catch {
+            print("task not deleted \(error.localizedDescription)")
+        }
     }
 
     func setNotification(for task: Task, completion: @escaping (Bool) -> Void) {

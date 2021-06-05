@@ -19,12 +19,13 @@ struct TaskEditView: View {
     @State private var detail: String
     @State private var isCompleted: Bool
     @State private var remindMe: Date
-    @State private var shouldRemindMe: Bool = false
+    @State private var shouldRemindMe: Bool
     @State private var showNotificationError: Bool = false
     @State private var eventDate: Date?
-    @State private var shouldAddEvent: Bool = false
+    @State private var shouldAddEvent: Bool
     @State private var eventActive: Bool = false
     @State private var event: EKEvent?
+    @State private var eventIdentifier: String?
 
     init(task: Task) {
         self.task = task
@@ -38,6 +39,8 @@ struct TaskEditView: View {
             _remindMe = State(wrappedValue: Date())
             _shouldRemindMe = State(wrappedValue: false)
         }
+        _shouldAddEvent = State(wrappedValue: task.eventAdded)
+        _eventIdentifier = State(wrappedValue: task.eventIdentifier)
     }
 
     var body: some View {
@@ -45,7 +48,7 @@ struct TaskEditView: View {
             Section(header: Text("Basic settings:")) {
                 TextField("Task name", text: $name.onChange(updateTask))
                 ZStack {
-                    TextEditor(text: $detail)
+                    TextEditor(text: $detail.onChange(updateTask))
                     Text(name).opacity(0)
                 }
             }
@@ -75,7 +78,9 @@ struct TaskEditView: View {
                                 if success {
                                     let event = EKEvent(eventStore: dataController.eventStore)
                                     event.title = task.unwrappedName
+                                    task.eventIdentifier = event.calendarItemIdentifier
                                     self.event = event
+                                    updateTask()
                                     eventActive.toggle()
                                 }
                             }
@@ -85,7 +90,7 @@ struct TaskEditView: View {
                                 EventView(eventStore: dataController.eventStore, event: event),
                                isActive: self.$eventActive) {
                     EmptyView()
-                }
+                }.hidden()
             }
         }
     }
@@ -107,7 +112,10 @@ struct TaskEditView: View {
             dataController.removeNotification(for: task)
         }
         if shouldAddEvent == false {
+            task.eventAdded = false
             dataController.removeEvent(task: task)
+        } else {
+            task.eventAdded = true
         }
     }
 
