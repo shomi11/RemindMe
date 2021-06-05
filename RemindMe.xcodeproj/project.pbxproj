@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA32FC62266BC58800327236 /* FontExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA32FC61266BC58800327236 /* FontExtension.swift */; };
 		CA917690266990E9004FF60E /* RemindMeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA91768F266990E9004FF60E /* RemindMeApp.swift */; };
 		CA917692266990E9004FF60E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA917691266990E9004FF60E /* ContentView.swift */; };
 		CA917694266990E9004FF60E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA917693266990E9004FF60E /* Assets.xcassets */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA32FC61266BC58800327236 /* FontExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontExtension.swift; sourceTree = "<group>"; };
 		CA91768C266990E9004FF60E /* RemindMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RemindMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA91768F266990E9004FF60E /* RemindMeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindMeApp.swift; sourceTree = "<group>"; };
 		CA917691266990E9004FF60E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 				CAE80645266A3394002EC275 /* BindingExtension.swift */,
 				CAE8064F266A5833002EC275 /* EventView.swift */,
 				CAE80651266A587C002EC275 /* EventCoordinator.swift */,
+				CA32FC61266BC58800327236 /* FontExtension.swift */,
 			);
 			path = RemindMe;
 			sourceTree = "<group>";
@@ -173,6 +176,7 @@
 			files = (
 				CAE8064A266A3A0A002EC275 /* TaskRowView.swift in Sources */,
 				CAE80648266A3776002EC275 /* TaskView.swift in Sources */,
+				CA32FC62266BC58800327236 /* FontExtension.swift in Sources */,
 				CAE80644266A3179002EC275 /* DataController.swift in Sources */,
 				CAE80650266A5833002EC275 /* EventView.swift in Sources */,
 				CAE80646266A3394002EC275 /* BindingExtension.swift in Sources */,

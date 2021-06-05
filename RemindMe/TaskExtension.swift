@@ -14,10 +14,6 @@ extension Task {
         name ?? "New Task"
     }
 
-    var unwrappedReminderDate: Date {
-        remindMe ?? Date()
-    }
-
     var unwrappedDetail: String {
         detail ?? ""
     }
@@ -28,8 +24,6 @@ extension Task {
         task.detail = "Some detail here"
         task.isCompleted = false
         task.name = "Here is name"
-        task.remindMe = Date()
         return task
     }()
-
 }

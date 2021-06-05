@@ -8,24 +8,19 @@
 import SwiftUI
 
 struct TaskRowView: View {
-
+    
     @ObservedObject var task: Task
-
+    
     var body: some View {
         NavigationLink(destination: TaskEditView(task: task)) {
             VStack(alignment: .leading) {
                 HStack(spacing: 16) {
-                    if let _ = task.remindMe {
-                        Image(systemName: "alarm")
-                            .font(.title)
-                            .foregroundColor(.blue)
-                    }
                     Text(task.unwrappedName)
-                        .font(.title)
+                        .font(.titleFont)
                 }
                 if let detail = task.detail {
                     Text(detail)
-                        .font(.title3)
+                        .font(.subTitleFont)
                 }
             }
         }
@@ -37,3 +32,4 @@ struct TaskRowView_Previews: PreviewProvider {
         TaskRowView(task: Task.example)
     }
 }
+

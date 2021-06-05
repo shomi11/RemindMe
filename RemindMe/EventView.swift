@@ -26,7 +26,7 @@ struct EventView: UIViewControllerRepresentable {
         eventEditViewController.eventStore = eventStore
 
         if let event = event {
-            eventEditViewController.event = event // when set to nil the controller would not display anything
+            eventEditViewController.event = event
         }
         eventEditViewController.editViewDelegate = context.coordinator
 

@@ -15,12 +15,11 @@ struct ContentView: View {
                     Image(systemName: "list.dash")
                     Text("Open")
                 }
-           TaskView(showClosedTask: true)
+            TaskView(showClosedTask: true)
                 .tabItem {
                     Image(systemName: "pencil.slash")
                     Text("Closed")
                 }
-
         }
     }
 }

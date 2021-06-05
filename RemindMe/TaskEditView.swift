@@ -18,79 +18,67 @@ struct TaskEditView: View {
     @State private var name: String
     @State private var detail: String
     @State private var isCompleted: Bool
-    @State private var remindMe: Date
-    @State private var shouldRemindMe: Bool
-    @State private var showNotificationError: Bool = false
     @State private var eventDate: Date?
     @State private var shouldAddEvent: Bool
     @State private var eventActive: Bool = false
     @State private var event: EKEvent?
-    @State private var eventIdentifier: String?
 
     init(task: Task) {
         self.task = task
         _name = State(wrappedValue: task.unwrappedName)
-        _detail = State(wrappedValue: task.unwrappedDetail)
+        _detail = State(wrappedValue: task.detail ?? "Enter detail")
         _isCompleted = State(wrappedValue: task.isCompleted)
-        if let reminder = task.remindMe {
-            _remindMe = State(wrappedValue: reminder)
-            _shouldRemindMe = State(wrappedValue: true)
-        } else {
-            _remindMe = State(wrappedValue: Date())
-            _shouldRemindMe = State(wrappedValue: false)
-        }
         _shouldAddEvent = State(wrappedValue: task.eventAdded)
-        _eventIdentifier = State(wrappedValue: task.eventIdentifier)
     }
 
     var body: some View {
-        Form {
-            Section(header: Text("Basic settings:")) {
-                TextField("Task name", text: $name.onChange(updateTask))
-                ZStack {
-                    TextEditor(text: $detail.onChange(updateTask))
-                    Text(name).opacity(0)
-                }
-            }
-            Section(header: Text("Reminder")) {
-                Toggle("Show reminder", isOn: $shouldRemindMe.animation().onChange(updateTask))
-                    .alert(isPresented: $showNotificationError) {
-                        Alert(
-                            title: Text("Something went wrong"),
-                            message: Text("Notification problem"),
-                            primaryButton: .default(Text("Show app settings"), action: showNotificationSettings),
-                            secondaryButton: .cancel()
-                        )
+        VStack {
+            Form {
+                Section(header: Text("Basic settings:")) {
+                    TextField("Task name", text: $name.onChange(updateTask))
+                        .font(.titleFont)
+                    ZStack {
+                        TextEditor(text: $detail.onChange(updateTask))
+                            .font(.subTitleFont)
+                        Text(name).opacity(0)
                     }
-                if shouldRemindMe {
-                    DatePicker(
-                        "Time",
-                        selection: $remindMe.onChange(updateTask),
-                        displayedComponents: .hourAndMinute
-                    )
+                }
+
+                Section(header: Text("Calendar")) {
+                        Button(action: {
+                            createEvent()
+                        }, label: {
+                            Text("Create event")
+                                .font(.titleFont)
+                        })
                 }
             }
-            Section(header: Text("Event")) {
-                Toggle("Add event", isOn: $shouldAddEvent.animation().onChange(updateTask))
-                    .onChange(of: shouldAddEvent, perform: { value in
-                        if value == true {
-                            dataController.addEvent(for: task) { success in
-                                if success {
-                                    let event = EKEvent(eventStore: dataController.eventStore)
-                                    event.title = task.unwrappedName
-                                    task.eventIdentifier = event.calendarItemIdentifier
-                                    self.event = event
-                                    updateTask()
-                                    eventActive.toggle()
-                                }
-                            }
-                        }
-                    })
-                NavigationLink(destination:
-                                EventView(eventStore: dataController.eventStore, event: event),
-                               isActive: self.$eventActive) {
-                    EmptyView()
-                }.hidden()
+            navLinkEvent
+        }
+        .navigationBarTitle(Text(task.unwrappedName), displayMode: .inline)
+    }
+
+    var navLinkEvent: some View {
+        NavigationLink(
+            destination: EventView(eventStore: dataController.eventStore, event: event),
+            isActive: $eventActive,
+            label: {
+                EmptyView()
+            })
+            .opacity(0.0)
+            .frame(width: 0, height: 0)
+            .hidden()
+    }
+
+    private func createEvent() {
+        dataController.addEvent(for: task) { success in
+            if success {
+                let event = EKEvent(eventStore: dataController.eventStore)
+                event.title = task.unwrappedName
+                task.eventIdentifier = event.calendarItemIdentifier
+                self.event = event
+                updateTask()
+                eventActive.toggle()
             }
         }
     }
@@ -98,19 +86,6 @@ struct TaskEditView: View {
     private func updateTask() {
         task.name = name
         task.detail = detail
-        if shouldRemindMe {
-            task.remindMe = remindMe
-            dataController.setNotification(for: task) { success in
-                if !success {
-                    task.remindMe = nil
-                    shouldRemindMe = false
-                    showNotificationError = true
-                }
-            }
-        } else {
-            task.remindMe = nil
-            dataController.removeNotification(for: task)
-        }
         if shouldAddEvent == false {
             task.eventAdded = false
             dataController.removeEvent(task: task)

@@ -33,6 +33,7 @@ struct TaskView: View {
                     emptyList
                 } else {
                     taskList
+                        .padding(.top)
                 }
             }
             .navigationTitle(showClosedTask ? "Closed Tasks" : "Open Tasks")
@@ -42,12 +43,20 @@ struct TaskView: View {
         }
     }
 
-    func addNewProject() {
+    private func addNewTask() {
         withAnimation {
             let task = Task(context: manageObjectContext)
             task.isCompleted = false
             dataController.save()
         }
+    }
+
+    private func deleteTask(at offsets: IndexSet) {
+        for offset in offsets {
+            let task = tasks.wrappedValue[offset]
+            dataController.delete(task)
+        }
+        dataController.save()
     }
 }
 
@@ -56,6 +65,9 @@ extension TaskView {
         List {
             ForEach(tasks.wrappedValue) { task in
                 TaskRowView(task: task)
+            }
+            .onDelete { indexSet in
+                deleteTask(at: indexSet)
             }
         }
         .listStyle(InsetGroupedListStyle())
@@ -74,7 +86,7 @@ extension TaskView {
         ToolbarItem(placement: .navigationBarTrailing) {
             if showClosedTask == false {
                 Button {
-                    addNewProject()
+                   addNewTask()
                 } label: {
                     Label("Add Task", systemImage: "plus")
                 }

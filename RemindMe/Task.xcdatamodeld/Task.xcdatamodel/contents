@@ -6,9 +6,8 @@
         <attribute name="eventIdentifier" optional="YES" attributeType="String"/>
         <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="remindMe" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <elements>
-        <element name="Task" positionX="-63" positionY="-18" width="128" height="119"/>
+        <element name="Task" positionX="-63" positionY="-18" width="128" height="104"/>
     </elements>
 </model>
