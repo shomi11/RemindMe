@@ -52,12 +52,17 @@ struct TaskEditView: View {
                 Section(header: Text("Calendar")) {
                     VStack {
                         Button(action: {
-                           eventAction()
+                            eventAction()
                         }, label: {
                             Text(eventAlreadyCreated ? "Delete event" : "Create event")
                                 .font(.titleFont)
                         })
                     }
+                }
+
+                Section {
+                    Button("Delete task", action: deleteTask)
+                        .foregroundColor(.red)
                 }
 
                 if eventAlreadyCreated {
@@ -121,6 +126,12 @@ struct TaskEditView: View {
     private func deleteEvent() {
         dataController.removeEvent(task: task)
         updateTask()
+        dataController.save()
+    }
+
+    private func deleteTask() {
+        dataController.delete(task)
+        dataController.save()
     }
 
     private func eventAction() {
@@ -170,8 +181,11 @@ struct TaskEditView_Previews: PreviewProvider {
 }
 
 extension View {
-  func endTextEditing() {
-    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
-                                    to: nil, from: nil, for: nil)
-  }
+    func endTextEditing() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil, for: nil
+        )
+    }
 }
